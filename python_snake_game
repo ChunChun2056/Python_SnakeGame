@@ -1,0 +1,59 @@
+import sys, random
+import pygame
+from pygame.math import Vector2
+
+class SNAKE:
+    def __init__(self):
+        self.body = [Vector2(5,10), Vector2(6,10), Vector2(7,10),]
+
+    def draw_snake(self):
+        for block in self.body:
+            x_pos = int(block.x * cell_size)
+            y_pos = int(block.y * cell_size)
+            snake_rect = pygame.Rect(x_pos, y_pos, cell_size, cell_size)
+            pygame.draw.rect(screen, (200,50,50), snake_rect)
+
+
+class FRUIT:
+    def __init__(self):
+        self.x = random.randint(0, cell_count -1 )
+        self.y = random.randint(0, cell_count -1 )
+        self.pos = Vector2(self.x, self.y)
+
+    def draw_fruit(self):
+        fruit_rect = pygame.Rect(int(self.pos.x * cell_size), int(self.pos.y * cell_size), cell_size,cell_size)
+        pygame.draw.rect(screen,(255,0,0),fruit_rect)
+
+#starting pygame
+pygame.init()
+
+#creating a size variable for how big a cell should be in a grid.
+cell_size = 40
+cell_count = 20
+
+#creating window
+screen = pygame.display.set_mode((cell_count * cell_size, cell_count * cell_size))
+test_surface = pygame.Surface((100,100))
+test_surface.fill((0,0,255))
+
+
+#creating a clock object for setting the FPS
+clock = pygame.time.Clock() 
+fruit = FRUIT()
+snake = SNAKE()
+
+while True:
+    for event in pygame.event.get(): #searching for a event
+        if event.type == pygame.QUIT: #checking if user closes the window
+            pygame.quit()
+            sys.exit()
+    
+    screen.fill((175,215,70))
+    fruit.draw_fruit()
+    snake.draw_snake()
+
+    #displaying the screen
+    pygame.display.update() 
+
+    #this sets the while loop to run only 60 times per second
+    clock.tick(60) 
