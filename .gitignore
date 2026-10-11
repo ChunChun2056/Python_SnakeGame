@@ -5,3 +5,4 @@
 *.keystore
 !build/.gitkeep
 export_credentials.cfg
+/build/*.pck
