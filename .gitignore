@@ -1,0 +1,7 @@
+.godot/
+*.tmp
+/build/*.apk
+/build/*.idsig
+*.keystore
+!build/.gitkeep
+export_credentials.cfg
