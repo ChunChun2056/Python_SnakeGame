@@ -23,6 +23,7 @@ WALK, RUN = 92.0, 150.0
 ACCEL, AIR_ACCEL = 950.0, 700.0
 GRAV, FALL_GRAV, MAX_FALL = 1000.0, 1250.0, 400.0
 JUMP_V, JUMP_CUT = 378.0, 0.45
+SPRING_V = 560.0
 SOLID = set("#XIB?UH")
 ONEWAY = set("=c")
 WATER = set("W<>A")
@@ -193,6 +194,10 @@ def simulate(lv, x, y, vx, direction, run, hold, max_frames=150, collect=None):
                 yield ("touch", hit)
         if touches(lv, x, y, "L", 6) or touches(lv, x, y, "^", 8):
             return
+        if vy >= 0 and touches(lv, x, y, "k", 8):
+            vy = -SPRING_V
+            jumping = False
+            continue
         if y > lv.h * T + 40:
             return
         if landed:
@@ -210,6 +215,7 @@ def validate(path):
     lv = Level(rows, header)
     start = goal = None
     specials = {}
+    gems_all = set()
     for y in range(lv.h):
         for x in range(lv.w):
             ch = rows[y][x]
@@ -219,7 +225,9 @@ def validate(path):
                 goal = (x, y)
             elif ch == "*":
                 specials[(x, y)] = "*"
-    targets = set("F*")
+            elif ch == "g":
+                gems_all.add((x, y))
+    targets = set("F*g")
     warp_src = {s: d for s, d in warps}
     seen = set()
     q = deque()
@@ -262,18 +270,21 @@ def validate(path):
                 push(dx * T + 8.0, (dy + 1) * T)
     goal_ok = goal in touched or (header.get("boss") and reached_arena)
     stars = [p for p in specials if p in touched]
-    return goal_ok, len(stars), len(specials), len(seen)
+    gems = [p for p in gems_all if p in touched]
+    return goal_ok, len(stars), len(specials), len(seen), len(gems), len(gems_all)
 
 
 def main():
     names = sys.argv[1:] or ["w%d_%d" % (w, l) for w in range(1, 9) for l in range(1, 6)]
     bad = 0
     for n in names:
-        ok, s, st, nodes = validate(os.path.join(ROOT, "levels", n + ".txt"))
+        ok, s, st, nodes, gm, gt = validate(os.path.join(ROOT, "levels", n + ".txt"))
         flag = "OK  " if ok else "FAIL"
         if not ok:
             bad += 1
-        print("%s %-6s goal=%s secrets reachable %d/%d  (states %d)" % (flag, n, ok, s, st, nodes), flush=True)
+        if s < st:
+            flag = "WARN" if ok else flag
+        print("%s %-6s goal=%s secrets reachable %d/%d gems %d/%d (states %d)" % (flag, n, ok, s, st, gm, gt, nodes), flush=True)
     print("failures:", bad)
     sys.exit(1 if bad else 0)
 

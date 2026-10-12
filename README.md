@@ -139,10 +139,25 @@ signs in left-to-right order), `boss=kind`, `arena=x0,x1`, `dark=1`,
 | `<` `>` | water current | `z` | spike ball |
 | `A` | air bubble vent | `j` | lava fireball jumper |
 | `Q` | quicksand | `Z` | wind updraft |
-| `d` `D` | decorations | `.` | empty |
+| `d` `D` | decorations | `k` | spring |
+| `.` | empty | | |
 
-Edit files by hand, or change `tools/gen_levels.py` and run it again
-(it overwrites all 40 files). Run `tools/validate_levels.py` afterwards.
+### How the levels are designed
+
+World 1-1 is drawn by hand as the tutorial. Every other level follows its
+own authored plan in `PLANS` at the top of `tools/gen_levels.py`: an ordered
+list of set pieces chosen for that level's theme. There are about 30 set
+pieces, including rolling hills with height changes, pillar gardens over
+pits, brick bridges, high and low two-route sections, brick-ceiling
+corridors, block stepping stones, pyramids, stair gauntlets with a shell to
+kick, enemies on floating platforms, flyer swarms over pits, spring
+launches to treasure roads, and each world's own hazards. Pieces adapt to
+the current ground height, the world's mechanics and the difficulty, so the
+same piece plays differently from world to world.
+
+Edit level files by hand, or change a plan or piece and run
+`tools/gen_levels.py` again (it overwrites all 40 files). Run
+`tools/validate_levels.py` afterwards.
 
 ## Building
 
@@ -207,17 +222,19 @@ godot --fixed-fps 60 -- --test --shots=/tmp/s    # also save screenshots
 
 * `validate_levels.py` simulates the player's real movement physics frame by
   frame and searches every standing position. It reports whether each
-  level's goal (or boss arena) and every secret star can be reached.
+  level's goal (or boss arena), every secret star and every gem can be
+  reached.
 * The in-engine suite checks simultaneous multi-touch input, sliding
   between buttons, jump height, no double jumps, stomp vs side damage,
   checkpoint respawn, losing a life, save/load, pause, resume and auto-pause
-  on focus loss, wind, water and the air meter, quicksand, ice, crumbling and
-  moving platforms. It then loads all 40 levels, sweeps the player through
+  on focus loss, springs, wind, water and the air meter, quicksand, ice,
+  crumbling and moving platforms. It then loads all 40 levels, sweeps the player through
   each, fights every boss to defeat, finishes the level and opens every menu.
 
 ### Test status of this build
 
-* All 40 levels pass the reachability validator (goal and all secrets).
+* All 40 levels pass the reachability validator (goal, all secrets and all
+  gems).
 * The full in-engine suite passes with no script errors, both from the
   project and from the exported game package built with the Android preset.
 * The APK was exported, signed and verified with `apksigner`. Its manifest

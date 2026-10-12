@@ -376,6 +376,16 @@ func apply_power(kind: String) -> void:
 	queue_redraw()
 
 
+func spring_launch(v: float) -> void:
+	velocity.y = -v
+	jumping = false
+	coyote = 0.0
+	buffer = 0.0
+	stomp_chain = 0
+	Audio.sfx("jump", 0.7)
+	Res.burst(level.fx_root(), global_position, Color("ff8aa0"), 6, 60, 0.3, 50)
+
+
 func teleport(pos: Vector2) -> void:
 	global_position = pos
 	velocity = Vector2.ZERO

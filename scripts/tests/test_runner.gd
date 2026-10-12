@@ -357,6 +357,22 @@ func _test_terrain() -> void:
 		var moved: float = plat.global_position.x - ppx
 		_check(absf((lvl.player.global_position.x - px) - moved) < 4.0 and lvl.player.is_on_floor(),
 			"moving platform carries the player")
+	# spring launches the player high
+	lvl = await _load(1, 3)
+	var spring = null
+	for n in lvl._entities.get_children():
+		if n.get("kind") == "spring":
+			spring = n
+			break
+	_check(spring != null, "level 1-3 has a spring")
+	if spring:
+		lvl.player.teleport(spring.global_position + Vector2(0, -20))
+		var sy: float = spring.global_position.y
+		var top := sy
+		for i in 40:
+			await get_tree().physics_frame
+			top = min(top, lvl.player.global_position.y)
+		_check(sy - top > 110.0, "spring launches high (%.0f px)" % (sy - top))
 	# water: slow sinking and swim strokes
 	lvl = await _load(6, 2)
 	var wc := Vector2i(-1, -1)

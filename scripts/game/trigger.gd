@@ -4,6 +4,8 @@ extends Node2D
 
 const Res = preload("res://scripts/game/res.gd")
 
+const SPRING_V := 560.0
+
 var kind := "checkpoint"
 var level: Node
 var target := Vector2.ZERO   # warp destination (world position of feet)
@@ -25,6 +27,9 @@ func _ready() -> void:
 			_spr.position = Vector2(4, -32)
 		"warp":
 			_spr = Res.sprite("warp", {"spin": [0, 1]}, 4.0)
+			_spr.position = Vector2(0, -8)
+		"spring":
+			_spr = Res.sprite("spring", {"idle": [0], "boing": [1]}, 1.0)
 			_spr.position = Vector2(0, -8)
 		"sign":
 			var s := Sprite2D.new()
@@ -62,6 +67,8 @@ func rect() -> Rect2:
 			return Rect2(global_position.x - 20, global_position.y - 24, 40, 24)
 		"vent":
 			return Rect2(global_position.x - 8, global_position.y - 40, 16, 40)
+		"spring":
+			return Rect2(global_position.x - 7, global_position.y - 8, 14, 8)
 	return Rect2(global_position.x - 6, global_position.y - 14, 12, 14)
 
 
@@ -95,6 +102,14 @@ func on_touch(player) -> void:
 			level.show_sign(text)
 		"vent":
 			player.air = player.AIR_MAX
+		"spring":
+			if player.velocity.y < 0.0 or _cool > 0.0:
+				return
+			_cool = 0.15
+			player.spring_launch(SPRING_V)
+			var a := _spr as AnimatedSprite2D
+			a.play("boing")
+			get_tree().create_timer(0.25).timeout.connect(func(): a.play("idle"))
 
 
 func activate_goal() -> void:

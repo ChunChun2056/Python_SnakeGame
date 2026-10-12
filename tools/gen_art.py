@@ -493,6 +493,20 @@ def items():
         warp.append(outline(img))
     save(sheet(warp), SPR, "warp.png")
 
+    # spring: compressed, extended
+    springs = []
+    for k in range(2):
+        img = new()
+        d = ImageDraw.Draw(img)
+        top = 9 if k == 0 else 3
+        d.rectangle([2, 14, 13, 15], fill=hexc("5a5a6e"))
+        for i, y in enumerate(range(top + 3, 14, 2)):
+            d.line([4 + (i % 2), y, 11 - (i % 2), y], fill=hexc("c9c2d6"))
+        d.rectangle([1, top, 14, top + 2], fill=hexc("ff3b5c"))
+        d.line([2, top, 13, top], fill=hexc("ff8aa0"))
+        springs.append(outline(img))
+    save(sheet(springs), SPR, "spring.png")
+
     # sign post
     img = new()
     d = ImageDraw.Draw(img)

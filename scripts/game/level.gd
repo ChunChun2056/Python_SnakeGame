@@ -419,6 +419,8 @@ func _spawn_entities() -> void:
 					var t := _trigger("sign", feet)
 					t.text = data.signs[sign_idx] if sign_idx < data.signs.size() else ""
 					sign_idx += 1
+				"k":
+					_trigger("spring", feet)
 				"A":
 					_trigger("vent", feet)
 					keep = "W"
@@ -445,7 +447,7 @@ func _spawn_entities() -> void:
 						_wind_column(x, y)
 				_:
 					keep = ch
-			if keep == "" or ch in ["S", "o", "g", "*", "1", "2", "3", "4", "5", "6", "M", "V", "C", "F", "T", "R",
+			if keep == "" or ch in ["S", "o", "g", "*", "1", "2", "3", "4", "5", "6", "M", "V", "C", "F", "T", "R", "k",
 					"Y", "z", "e", "r", "f", "h", "G", "y", "n", "m", "K"]:
 				keep = "W" if _is_water_entity(x, y) else "."
 			grid[y][x] = keep
